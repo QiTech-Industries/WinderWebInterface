@@ -185,44 +185,42 @@ const config = {
 };
 
 app.ws('/ws', function (ws, req) {
-    ws.on('connection', function connection(ws) {
-        console.log("connection established");
+    console.log("connection established");
 
-        const send = (event, data, delay = 0) => {
-            setTimeout(() => {
-                ws.send(JSON.stringify({ event, data }));
-            }, delay);
+    const send = (event, data, delay = 0) => {
+        setTimeout(() => {
+            ws.send(JSON.stringify({ event, data }));
+        }, delay);
+    }
+
+    setInterval(() => {
+        switch (status.m) {
+            case "winding":
+                wind();
+                break;
+
+            case "unwinding":
+                unwind();
+                break;
+
+            case "power":
+                power();
+                break;
+
+            case "pulling":
+                pull();
+                break;
+
+            case "changing":
+                change();
+                break;
+
+            default:
+                standby();
+                break;
         }
-
-        setInterval(() => {
-            switch (status.m) {
-                case "winding":
-                    wind();
-                    break;
-
-                case "unwinding":
-                    unwind();
-                    break;
-
-                case "power":
-                    power();
-                    break;
-
-                case "pulling":
-                    pull();
-                    break;
-
-                case "changing":
-                    change();
-                    break;
-
-                default:
-                    standby();
-                    break;
-            }
-            send("stats", status);
-        }, 1000);
-    });
+        send("stats", status);
+    }, 1000);
 
     ws.on('message', function incoming(message) {
         console.log(`recieved: ${message}`);
