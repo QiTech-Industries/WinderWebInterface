@@ -1,13 +1,12 @@
-const WebSocket = require('ws');
 const express = require("express");
-
 const app = express();
+require('express-ws')(app);
+
 app.listen(80, () => {
     console.log(`Server listening on Port 80`)
 });
 app.use(express.static('public'));
 
-const wss = new WebSocket.Server({ port: 5001 });
 let status;
 let speed = 3;
 
@@ -185,14 +184,45 @@ const config = {
     },
 };
 
-wss.on('connection', function connection(ws) {
-    console.log("connection established");
+app.ws('/ws', function (ws, req) {
+    ws.on('connection', function connection(ws) {
+        console.log("connection established");
 
-    const send = (event, data, delay = 0) => {
-        setTimeout(() => {
-            ws.send(JSON.stringify({ event, data }));
-        }, delay);
-    }
+        const send = (event, data, delay = 0) => {
+            setTimeout(() => {
+                ws.send(JSON.stringify({ event, data }));
+            }, delay);
+        }
+
+        setInterval(() => {
+            switch (status.m) {
+                case "winding":
+                    wind();
+                    break;
+
+                case "unwinding":
+                    unwind();
+                    break;
+
+                case "power":
+                    power();
+                    break;
+
+                case "pulling":
+                    pull();
+                    break;
+
+                case "changing":
+                    change();
+                    break;
+
+                default:
+                    standby();
+                    break;
+            }
+            send("stats", status);
+        }, 1000);
+    });
 
     ws.on('message', function incoming(message) {
         console.log(`recieved: ${message}`);
@@ -279,35 +309,6 @@ wss.on('connection', function connection(ws) {
                 break;
         }
     });
-
-    setInterval(() => {
-        switch (status.m) {
-            case "winding":
-                wind();
-                break;
-
-            case "unwinding":
-                unwind();
-                break;
-
-            case "power":
-                power();
-                break;
-
-            case "pulling":
-                pull();
-                break;
-
-            case "changing":
-                change();
-                break;
-
-            default:
-                standby();
-                break;
-        }
-        send("stats", status);
-    }, 1000);
 });
 
 standby();
