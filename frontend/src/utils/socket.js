@@ -85,6 +85,6 @@ class Socket {
     }
 }
 
-const socket = new Socket(`${process.env.IS_HTTPS ? "wss" : "ws"}://${window.location.hostname}/ws`)
+const socket = new Socket(`${window.location.protocol !== 'https:' ? "ws" : "wss"}://${window.location.hostname}/ws`)
 socket.open();
 export { socket };

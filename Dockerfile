@@ -1,6 +1,5 @@
 # build environment
 FROM node:16 as builder
-ENV IS_HTTPS=true
 WORKDIR /usr/src/app
 COPY frontend/package*.json ./
 RUN npm install
