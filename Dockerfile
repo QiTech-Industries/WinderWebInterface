@@ -1,11 +1,11 @@
 # build environment
 FROM node:16 as builder
 WORKDIR /usr/src/app
-COPY src/package*.json ./
+COPY frontend/package*.json ./
 RUN npm install
 # layers should be cached till here, no npm install on rebuild
 
-COPY src .
+COPY frontend .
 RUN npm run build
 
 
