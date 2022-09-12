@@ -312,7 +312,7 @@ app.ws('/ws', function (ws, req) {
 // handle every other route with index.html, which will contain
 // a script tag to your application's JavaScript file(s).
 app.get('*', function (request, response) {
-    response.sendFile('/frontend/public/index.html');
+    response.sendFile('/public/index.html');
 });
 
 standby();
