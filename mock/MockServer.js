@@ -1,4 +1,11 @@
-const WebSocket = require('ws')
+const WebSocket = require('ws');
+const express = require("express");
+
+const app = express();
+app.listen(80, () => {
+    console.log(`Server listening on Port 80`)
+});
+app.use(express.static('public'));
 
 const wss = new WebSocket.Server({ port: 5001 });
 let status;
