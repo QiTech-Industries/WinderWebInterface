@@ -5,7 +5,7 @@ require('express-ws')(app);
 app.listen(80, () => {
     console.log(`Server listening on Port 80`)
 });
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 let status;
 let speed = 3;
@@ -311,8 +311,8 @@ app.ws('/ws', function (ws, req) {
 
 // handle every other route with index.html, which will contain
 // a script tag to your application's JavaScript file(s).
-app.get('*', function (request, response) {
-    response.sendFile('/public/index.html');
+app.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 standby();
